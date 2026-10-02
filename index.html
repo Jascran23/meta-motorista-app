@@ -134,10 +134,12 @@ function renderWeekly(total, days){
   const rows = weekdays.map((day,i)=>{
     const lockValue = weeklyLocks[i] && typeof weeklyLocks[i] === 'object' ? weeklyLocks[i].value : (weeklyAnchor && weeklyAnchor.index===i ? weeklyAnchor.value : defaultDaily);
     const daily = fixed[i] ? Math.max(0,lockValue) : defaultDaily;
-    return '<tr><td>'+day+'</td><td><input class="day-count" data-day="'+i+'" inputmode="decimal" min="0" value="'+counts[i].toFixed(1).replace('.',',')+'" aria-label="Vezes por mês: '+day+'"></td><td><input type="checkbox" class="lock-daily" data-day="'+i+'" '+(weeklyLocks[i]?'checked':'')+' aria-label="Manter faturamento de '+day+' fixo"></td><td><input class="daily-revenue" data-day="'+i+'" inputmode="decimal" value="'+daily.toFixed(2).replace('.',',')+'" '+(weeklyLocks[i]?'disabled':'')+' aria-label="Faturamento por dia: '+day+'"></td></tr>';
+    return '<tr><td>'+day+'</td><td><input class="day-count" data-day="'+i+'" inputmode="decimal" min="0" value="'+counts[i].toFixed(1).replace('.',',')+'" aria-label="Vezes por mês: '+day+'"></td><td><input type="checkbox" class="lock-daily" data-day="'+i+'" '+(weeklyLocks[i]?'checked':'')+' aria-label="Manter faturamento de '+day+' fixo"></td><td><input class="daily-revenue" data-day="'+i+'" inputmode="decimal" value="'+daily.toFixed(2).replace('.',',')+'" aria-label="Faturamento por dia: '+day+'"></td></tr>';
   }).join('');
   const displayedTotal = counts.reduce((sum,count,i)=>sum+count*(fixed[i] ? Math.max(0,weeklyLocks[i] && typeof weeklyLocks[i]==='object' ? weeklyLocks[i].value : weeklyAnchor.value) : defaultDaily),0);
-  return '<div class="panel weekly-wrap"><h2>Faturamento por dia da semana</h2><table class="weekly-table"><thead><tr><th>Dia da semana</th><th>Vezes/mês</th><th>Fixo</th><th>Faturamento diário (R$)</th></tr></thead><tbody>'+rows+'</tbody><tfoot><tr><td colspan="3">Total mensal</td><td>'+brl(displayedTotal)+'</td></tr></tfoot></table><p class="hint">Marque os dias que devem manter o faturamento. Os dias desmarcados se ajustam ao editar um valor para fechar o total mensal sugerido.</p></div>';
+  const totalDias = counts.reduce((sum,count)=>sum+count,0);
+  
+  return '<div class="panel weekly-wrap"><h2>Faturamento por dia da semana</h2><table class="weekly-table"><thead><tr><th>Dia da semana</th><th>Vezes/mês</th><th>Fixo</th><th>Faturamento diário (R$)</th></tr></thead><tbody>'+rows+'</tbody><tfoot><tr><td colspan="3">Total mensal · '+num(totalDias,0)+' dias</td><td>'+brl(displayedTotal)+'</td></tr></tfoot></table><p class="hint">Marque os dias que devem manter o faturamento. Os dias desmarcados se ajustam ao editar um valor para fechar o total mensal sugerido.</p></div>';
 }
 
 const IDS = ['preco','cons','manut','meta','dias','gkm'];
@@ -265,7 +267,9 @@ function calc(){
   }));
   out.querySelectorAll('.daily-revenue').forEach(input=>input.addEventListener('change',()=>{
     const index=Number(input.dataset.day);
-    weeklyAnchor={index,value:Math.max(0,parse(input.value))};
+    const value=Math.max(0,parse(input.value));
+    if(weeklyLocks[index]) weeklyLocks[index]={value};
+    else weeklyAnchor={index,value};
     calc();
   }));
 }
