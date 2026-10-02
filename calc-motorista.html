@@ -149,7 +149,13 @@ let fixos = [
 ];
 
 function save(){
-  try{ localStorage.setItem('metaMotorista', JSON.stringify({f:Object.fromEntries(IDS.map(i=>[i,$(i).value])),fixos})); }catch(e){}
+  try{
+    if(!weeklyCounts) weeklyCounts = weekdays.map(() => Math.max(val('dias'),1)/7);
+    localStorage.setItem('metaMotorista', JSON.stringify({
+      f:Object.fromEntries(IDS.map(i=>[i,$(i).value])), fixos,
+      weeklyCounts, weeklyLocks, weeklyAnchor
+    }));
+  }catch(e){}
 }
 function load(){
   try{
@@ -157,6 +163,9 @@ function load(){
     if(!d) return;
     IDS.forEach(i => { if(d.f && d.f[i]!==undefined) $(i).value = d.f[i]; });
     if(Array.isArray(d.fixos)) fixos = d.fixos;
+    if(Array.isArray(d.weeklyCounts) && d.weeklyCounts.length===7) weeklyCounts=d.weeklyCounts.map(v=>Math.max(0,Number(v)||0));
+    if(Array.isArray(d.weeklyLocks) && d.weeklyLocks.length===7) weeklyLocks=d.weeklyLocks.map(v=>v && typeof v==='object' ? {value:Math.max(0,Number(v.value)||0)} : false);
+    if(d.weeklyAnchor && Number.isInteger(d.weeklyAnchor.index) && d.weeklyAnchor.index>=0 && d.weeklyAnchor.index<7) weeklyAnchor={index:d.weeklyAnchor.index,value:Math.max(0,Number(d.weeklyAnchor.value)||0)};
   }catch(e){}
 }
 
