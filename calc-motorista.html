@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meta do Motorista</title>
+<style>
+:root{
+  --bg:#ECEDE8; --paper:#F8F8F4; --ink:#1B2A2F; --mute:#5F6E72; --line:#CBD0CA;
+  --green:#0F6B4F; --yellow:#F2B705; --red:#B93A2B; --blue:#2F5F7A; --grey:#8A9498;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:22px 18px 8px;max-width:1040px;margin:0 auto}
+h1{margin:0;font-size:1.6rem;letter-spacing:-.02em}
+header p{margin:4px 0 0;color:var(--mute)}
+main{max-width:1040px;margin:0 auto;padding:12px 18px 40px;display:grid;gap:18px}
+@media(min-width:880px){main{grid-template-columns:380px 1fr;align-items:start}}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px}
+h2{font-size:1.05rem;margin:0 0 12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:block;font-size:.85rem;color:var(--mute);margin-bottom:4px}
+.field{margin-bottom:12px}
+input{width:100%;font:inherit;font-size:1rem;padding:10px 11px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+input:focus-visible,button:focus-visible{outline:3px solid var(--yellow);outline-offset:1px}
+.sep{border:0;border-top:1px dashed var(--line);margin:16px 0}
+.fx{display:grid;grid-template-columns:1fr 110px 36px;gap:8px;margin-bottom:8px}
+.fx button{border:1px solid var(--line);background:#fff;border-radius:8px;font-size:1.1rem;color:var(--red);cursor:pointer}
+.add{width:100%;padding:10px;border:1px dashed var(--green);background:transparent;color:var(--green);border-radius:8px;font:inherit;font-weight:600;cursor:pointer}
+.hero{background:var(--green);color:#fff;border-radius:14px;padding:22px 20px}
+.hero small{opacity:.85;font-size:.95rem}
+.hero .big{font-size:clamp(2.6rem,9vw,3.8rem);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin:4px 0}
+.hero .sub{opacity:.92}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+@media(min-width:600px){.cards{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:599px){main{padding-left:10px;padding-right:10px}.panel{padding:14px}.grid2{gap:8px}}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px}
+.card b{display:block;font-size:1.25rem;letter-spacing:-.01em}
+.card span{font-size:.82rem;color:var(--mute)}
+.bar{display:flex;height:26px;border-radius:7px;overflow:hidden;border:1px solid var(--line);margin:6px 0 10px}
+.bar i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.84rem;color:var(--mute)}
+.legend em{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+td{padding:8px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.sub td{padding-left:14px;color:var(--mute);font-size:.88rem}
+tr.tot td{font-weight:800;border-bottom:0;border-top:2px solid var(--ink)}
+.neg{color:var(--red)} .pos{color:var(--green)}
+.err{background:#F6DAD5;border:1px solid var(--red);color:#6E1E14;border-radius:12px;padding:16px}
+.hint{font-size:.82rem;color:var(--mute);margin-top:12px}
+.weekly-wrap{overflow-x:auto;margin-top:14px}
+.weekly-table{min-width:520px}
+.weekly-table th,.weekly-table td{padding:9px 10px;border:1px solid var(--line);text-align:right}
+.weekly-table th{background:var(--green);color:#fff;font-size:.82rem}
+.weekly-table th:first-child,.weekly-table td:first-child{text-align:left}
+.weekly-table input{max-width:130px;padding:6px;text-align:right}
+.weekly-table input[type="checkbox"]{width:auto;margin-right:8px;vertical-align:middle}
+.weekly-table tfoot{font-weight:800;background:var(--ink);color:#fff}
+@media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
+@media(max-width:599px){
+  .weekly-table{min-width:0;width:100%;display:block}
+  .weekly-table thead{display:none}
+  .weekly-table tbody,.weekly-table tfoot{display:block}
+  .weekly-table tbody tr{display:grid;grid-template-columns:minmax(0,1fr) 72px minmax(0,1.3fr);gap:8px;padding:10px;border:1px solid var(--line);border-bottom:0;background:#fff}
+  .weekly-table tbody tr:last-child{border-bottom:1px solid var(--line)}
+  .weekly-table tbody td{padding:0;border:0;text-align:left;white-space:normal}
+  .weekly-table tbody td:first-child{grid-column:1/-1;font-weight:700}
+  .weekly-table tbody td:nth-child(2)::before{content:'Vezes/mês';display:block;font-size:.72rem;color:var(--mute);margin-bottom:3px}
+  .weekly-table tbody td:nth-child(3){text-align:center;align-self:end;padding-bottom:8px}
+  .weekly-table tbody td:nth-child(3)::before{content:'Fixo';display:block;font-size:.72rem;color:var(--mute);margin-bottom:5px}
+  .weekly-table tbody td:nth-child(4)::before{content:'Faturamento diário';display:block;font-size:.72rem;color:var(--mute);margin-bottom:3px}
+  .weekly-table tbody input{max-width:none;width:100%;min-width:0;font-size:.92rem}
+  .weekly-table tbody input[type="checkbox"]{width:20px;height:20px;margin:0}
+  .weekly-table tfoot tr{display:grid;grid-template-columns:1fr auto;align-items:center;padding:12px 10px}
+  .weekly-table tfoot td{border:0;padding:0;text-align:right}
+  .weekly-table tfoot td:first-child{grid-column:1;text-align:left}
+  .weekly-table tfoot td:last-child{grid-column:2}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Meta do Motorista</h1>
+  <p>Preencha seus números e veja quantos km você precisa rodar para bater a meta.</p>
+</header>
+
+<main>
+  <section class="panel" aria-label="Seus números">
+    <h2>Combustível e carro</h2>
+    <div class="grid2">
+      <div class="field"><label for="preco">Preço do combustível (R$/L)</label><input id="preco" inputmode="decimal" value="5,99"></div>
+      <div class="field"><label for="cons">Consumo (km/L)</label><input id="cons" inputmode="decimal" value="12"></div>
+      <div class="field"><label for="manut">Manutenção por km (R$)</label><input id="manut" inputmode="decimal" value="0,15"></div>
+    </div>
+
+    <hr class="sep">
+    <h2>Ganhos e meta</h2>
+    <div class="grid2">
+      <div class="field"><label for="meta">Meta de lucro no mês (R$)</label><input id="meta" inputmode="decimal" value="4000"></div>
+      <div class="field"><label for="dias">Dias trabalhados no mês</label><input id="dias" inputmode="decimal" value="26"></div>
+      <div class="field"><label for="gkm">Ganho por km (R$/km)</label><input id="gkm" inputmode="decimal" value="1,80"></div>
+    </div>
+
+    <hr class="sep">
+    <h2>Custos mensais fixos</h2>
+    <div id="fixos"></div>
+    <button class="add" id="add" type="button">+ Adicionar custo</button>
+    <p class="hint">Mensalize os custos anuais: IPVA, seguro e licenciamento divididos por 12. Seus dados ficam salvos neste aparelho.</p>
+  </section>
+
+  <section aria-live="polite" id="out"></section>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const brl = n => n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const num = (n,d=0) => n.toLocaleString('pt-BR',{maximumFractionDigits:d,minimumFractionDigits:d});
+const val = id => { const v = parseFloat(String($(id).value).replace(/\./g,'').replace(',','.')); return isFinite(v) ? v : 0; };
+const parse = s => { const v = parseFloat(String(s).replace(',','.')); return isFinite(v) ? v : 0; };
+const weekdays = ['Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado','Domingo'];
+let weeklyCounts = null;
+let weeklyLocks = Array(7).fill(false);
+let weeklyAnchor = null;
+
+function renderWeekly(total, days){
+  if(!weeklyCounts) weeklyCounts = weekdays.map(() => days/7);
+  const counts = weeklyCounts;
+  const fixed = weekdays.map((_,i)=>weeklyLocks[i] || (weeklyAnchor && weeklyAnchor.index===i));
+  const fixedTotal = counts.reduce((sum,count,i)=>sum+(fixed[i] ? count*(weeklyLocks[i] ? (weeklyLocks[i].value ?? 0) : weeklyAnchor.value) : 0),0);
+  const remainingDays = counts.reduce((sum,count,i)=>sum+(fixed[i]?0:count),0);
+  const defaultDaily = remainingDays>0 ? Math.max(0,total-fixedTotal)/remainingDays : 0;
+  const rows = weekdays.map((day,i)=>{
+    const lockValue = weeklyLocks[i] && typeof weeklyLocks[i] === 'object' ? weeklyLocks[i].value : (weeklyAnchor && weeklyAnchor.index===i ? weeklyAnchor.value : defaultDaily);
+    const daily = fixed[i] ? Math.max(0,lockValue) : defaultDaily;
+    return '<tr><td>'+day+'</td><td><input class="day-count" data-day="'+i+'" inputmode="decimal" min="0" value="'+counts[i].toFixed(1).replace('.',',')+'" aria-label="Vezes por mês: '+day+'"></td><td><input type="checkbox" class="lock-daily" data-day="'+i+'" '+(weeklyLocks[i]?'checked':'')+' aria-label="Manter faturamento de '+day+' fixo"></td><td><input class="daily-revenue" data-day="'+i+'" inputmode="decimal" value="'+daily.toFixed(2).replace('.',',')+'" '+(weeklyLocks[i]?'disabled':'')+' aria-label="Faturamento por dia: '+day+'"></td></tr>';
+  }).join('');
+  const displayedTotal = counts.reduce((sum,count,i)=>sum+count*(fixed[i] ? Math.max(0,weeklyLocks[i] && typeof weeklyLocks[i]==='object' ? weeklyLocks[i].value : weeklyAnchor.value) : defaultDaily),0);
+  return '<div class="panel weekly-wrap"><h2>Faturamento por dia da semana</h2><table class="weekly-table"><thead><tr><th>Dia da semana</th><th>Vezes/mês</th><th>Fixo</th><th>Faturamento diário (R$)</th></tr></thead><tbody>'+rows+'</tbody><tfoot><tr><td colspan="3">Total mensal</td><td>'+brl(displayedTotal)+'</td></tr></tfoot></table><p class="hint">Marque os dias que devem manter o faturamento. Os dias desmarcados se ajustam ao editar um valor para fechar o total mensal sugerido.</p></div>';
+}
+
+const IDS = ['preco','cons','manut','meta','dias','gkm'];
+let fixos = [
+  {n:'Parcela / aluguel do carro', v:'1200'},
+  {n:'Seguro', v:'250'},
+  {n:'IPVA e licenciamento', v:'120'},
+  {n:'Celular e internet', v:'100'}
+];
+
+function save(){
+  try{ localStorage.setItem('metaMotorista', JSON.stringify({f:Object.fromEntries(IDS.map(i=>[i,$(i).value])),fixos})); }catch(e){}
+}
+function load(){
+  try{
+    const d = JSON.parse(localStorage.getItem('metaMotorista')||'null');
+    if(!d) return;
+    IDS.forEach(i => { if(d.f && d.f[i]!==undefined) $(i).value = d.f[i]; });
+    if(Array.isArray(d.fixos)) fixos = d.fixos;
+  }catch(e){}
+}
+
+function renderFixos(){
+  $('fixos').innerHTML = '';
+  fixos.forEach((f,i) => {
+    const row = document.createElement('div');
+    row.className = 'fx';
+    row.innerHTML = '<input aria-label="Nome do custo" placeholder="Nome do custo"><input aria-label="Valor mensal" inputmode="decimal" placeholder="R$ 0">'
+      + '<button type="button" aria-label="Remover custo">×</button>';
+    const [n,v,b] = row.children;
+    n.value = f.n; v.value = f.v;
+    n.oninput = () => { fixos[i].n = n.value; calc(); };
+    v.oninput = () => { fixos[i].v = v.value; calc(); };
+    b.onclick = () => { fixos.splice(i,1); renderFixos(); calc(); };
+    $('fixos').appendChild(row);
+  });
+}
+
+function calc(){
+  save();
+  const preco=val('preco'), cons=val('cons'), manut=val('manut');
+  const meta=val('meta'), dias=Math.max(val('dias'),1), gkm=val('gkm');
+  const totalFixos = fixos.reduce((s,f)=>s+parse(f.v),0);
+  const out = $('out');
+
+  if(cons<=0 || gkm<=0){
+    out.innerHTML = '<div class="err"><b>Faltam dados.</b><br>Informe o consumo (km/L) e o ganho por km para calcular.</div>';
+    return;
+  }
+  const comb = preco/cons;                 // R$ de combustível por km
+  const margem = gkm - comb - manut;      // lucro variável por km
+
+  if(margem <= 0){
+    out.innerHTML = '<div class="err"><b>Com esses números cada km rodado dá prejuízo.</b><br>'
+      + 'Você recebe ' + brl(gkm) + '/km e gasta ' + brl(comb+manut) + '/km com combustível e manutenção. '
+      + 'Aumente o ganho por km ou revise o consumo.</div>';
+    return;
+  }
+
+  const km = (meta+totalFixos)/margem;
+  const bruto = km*gkm, vComb = km*comb, vManut = km*manut;
+  const litros = km/cons;
+  const kmDia = km/dias;
+
+  const seg = [
+    ['Combustível', vComb, 'var(--yellow)'],
+    ['Manutenção', vManut, 'var(--blue)'],
+    ['Custos fixos', totalFixos, 'var(--red)'],
+    ['Seu lucro', meta, 'var(--green)']
+  ];
+  const bar = seg.map(s=>'<i style="width:'+(s[1]/bruto*100)+'%;background:'+s[2]+'" title="'+s[0]+'"></i>').join('');
+  const leg = seg.map(s=>'<span><em style="background:'+s[2]+'"></em>'+s[0]+' '+num(s[1]/bruto*100,0)+'%</span>').join('');
+  const esc = t => String(t).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const linhasFixos = fixos.filter(f=>parse(f.v)>0)
+    .map(f=>'<tr class="sub"><td>'+esc(f.n||'Sem nome')+'</td><td>'+brl(parse(f.v))+'</td></tr>').join('');
+
+  out.innerHTML =
+    '<div class="hero"><small>Para lucrar ' + brl(meta) + ' no mês, rode</small>'
+    + '<div class="big">' + num(km,0) + ' km</div>'
+    + '<div class="sub">≈ ' + num(kmDia,0) + ' km por dia em ' + num(dias,0) + ' dias'
+    + '</div></div>'
+
+    + '<div class="cards">'
+    + '<div class="card"><b>' + brl(bruto) + '</b><span>faturamento bruto no mês</span></div>'
+    + '<div class="card"><b>' + brl(bruto/dias) + '</b><span>bruto por dia trabalhado</span></div>'
+    + '<div class="card"><b>' + brl(meta/dias) + '</b><span>lucro por dia trabalhado</span></div>'
+    + '<div class="card"><b>' + num(litros,0) + ' L</b><span>de combustível no mês</span></div>'
+    + '<div class="card"><b>' + brl((vComb+vManut+totalFixos)/km) + '</b><span>custo total por km</span></div>'
+    + '<div class="card"><b>' + brl(margem) + '</b><span>lucro por km antes dos fixos</span></div>'
+    + '</div>'
+
+    + '<div class="panel" style="margin-top:14px"><h2>Para onde vai cada real</h2>'
+    + '<div class="bar" role="img" aria-label="Distribuição do faturamento">' + bar + '</div>'
+    + '<div class="legend">' + leg + '</div></div>'
+
+    + '<div class="panel" style="margin-top:14px"><h2>Relatório detalhado do mês</h2><table>'
+    + '<tr><td>Faturamento bruto (' + num(km,0) + ' km × ' + brl(gkm) + ')</td><td>' + brl(bruto) + '</td></tr>'
+    + '<tr><td>(−) Combustível (' + num(litros,0) + ' L × ' + brl(preco) + ')</td><td class="neg">' + brl(vComb) + '</td></tr>'
+    + '<tr><td>(−) Manutenção por km</td><td class="neg">' + brl(vManut) + '</td></tr>'
+    + '<tr><td>(−) Custos fixos</td><td class="neg">' + brl(totalFixos) + '</td></tr>' + linhasFixos
+    + '<tr class="tot"><td>(=) Lucro líquido</td><td class="pos">' + brl(meta) + '</td></tr></table>'
+    + '<p class="hint">Estimativa baseada nos valores informados. Km rodados incluem os km sem passageiro: ajuste o ganho por km para refletir isso.</p></div>';
+  out.insertAdjacentHTML('beforeend', renderWeekly(bruto,dias));
+  out.querySelectorAll('.day-count').forEach(input=>input.addEventListener('change',()=>{
+    weeklyCounts[Number(input.dataset.day)]=Math.max(0,parse(input.value));
+    calc();
+  }));
+  out.querySelectorAll('.lock-daily').forEach(input=>input.addEventListener('change',()=>{
+    const index=Number(input.dataset.day);
+    if(input.checked){
+      const field=out.querySelector('.daily-revenue[data-day="'+index+'"]');
+      weeklyLocks[index]={value:Math.max(0,parse(field.value))};
+      if(weeklyAnchor && weeklyAnchor.index===index) weeklyAnchor=null;
+    }else weeklyLocks[index]=false;
+    calc();
+  }));
+  out.querySelectorAll('.daily-revenue').forEach(input=>input.addEventListener('change',()=>{
+    const index=Number(input.dataset.day);
+    weeklyAnchor={index,value:Math.max(0,parse(input.value))};
+    calc();
+  }));
+}
+
+load();
+IDS.forEach(i => $(i).addEventListener('input', calc));
+$('add').onclick = () => { fixos.push({n:'',v:''}); renderFixos(); calc(); const r=$('fixos').lastChild; if(r) r.firstChild.focus(); };
+renderFixos();
+calc();
+</script>
+</body>
+</html>
